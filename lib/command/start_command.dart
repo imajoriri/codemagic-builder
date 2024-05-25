@@ -169,7 +169,7 @@ Workflow: ${selectedWorkflow.name}
         case BuildStatus.failed:
           logger.err("Build failed.");
           logger.info(
-              "see https://codemagic.io/app/${application.id}/builds/${build.id}");
+              "  see https://codemagic.io/app/${application.id}/builds/${build.id}");
           _showNotification("Build failed.", "Codemagic build failed.");
           exit.exitWithError();
       }
