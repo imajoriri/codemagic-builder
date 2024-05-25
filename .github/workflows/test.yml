@@ -14,4 +14,4 @@ jobs:
       - uses: dart-lang/setup-dart@v1
 
       - name: "Run tests"
-        run: flutter test
+        run: dart test
