@@ -108,7 +108,6 @@ Workflow: ${selectedWorkflow.name}
 
   @override
   Future<void> run() async {
-    logger.info("Starting a new build...");
     // Codemagic APIで使用する環境変数がない場合はエラーを出力して終了する。
     if (token == null) {
       logger.err("CODEMAGIC_API_TOKEN is not set.");
