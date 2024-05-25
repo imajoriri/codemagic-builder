@@ -37,4 +37,20 @@ class BuildRepository {
     );
     return Build.fromJson(response.data);
   }
+
+  /// ビルドのステータスを取得する。
+  Future<String> getBuildStatus({
+    required String token,
+    required String buildId,
+  }) async {
+    final response = await dio.get(
+      "https://api.codemagic.io/builds/$buildId",
+      options: Options(
+        headers: {
+          'x-auth-token': token,
+        },
+      ),
+    );
+    return response.data['build']['status'];
+  }
 }

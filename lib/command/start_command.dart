@@ -4,6 +4,7 @@ import 'package:codemagic_builder/controller/select_one/select_one.dart';
 import 'package:codemagic_builder/controller/token/token.dart';
 import 'package:codemagic_builder/entity/application/application.dart';
 import 'package:codemagic_builder/entity/build/build.dart';
+import 'package:codemagic_builder/entity/build_status/build_status.dart';
 import 'package:codemagic_builder/entity/workflow/workflow.dart';
 import 'package:codemagic_builder/repository/application_repository.dart';
 import 'package:codemagic_builder/repository/build_repository.dart';
@@ -106,11 +107,73 @@ Workflow: ${selectedWorkflow.name}
     return build;
   }
 
+  /// ビルドが以下のステータスになるまで待機する。
+  /// - [BuildStatus.finished]
+  /// - [BuildStatus.failed]
+  /// - [BuildStatus.canceled]
+  Future<void> _waitBuild(Build build) async {
+    final buildRepository = ref.read(buildRepositoryProvider);
+    while (true) {
+      final statusStr = await buildRepository.getBuildStatus(
+        token: token!,
+        buildId: build.id,
+      );
+      final status = BuildStatus.fromString(statusStr);
+      switch (status) {
+        case BuildStatus.queued:
+          logger.info("Build queued...");
+          break;
+        case BuildStatus.preparing:
+          logger.info("Preparing build machine...");
+          break;
+        case BuildStatus.fetching:
+          logger.info("Fetching app sources...");
+          break;
+        case BuildStatus.testing:
+          logger.info("Testing...");
+          break;
+        case BuildStatus.building:
+          logger.info("Building...");
+          break;
+        case BuildStatus.publishing:
+          logger.info("Publishing...");
+          break;
+        case BuildStatus.timeout:
+          logger.err("Build timeout.");
+          exit.exitWithError();
+        case BuildStatus.warning:
+          logger.warn("Build warning.");
+          break;
+        case BuildStatus.skipped:
+          logger.warn("Build skipped.");
+          break;
+        case BuildStatus.canceled:
+          logger.warn("Build canceled.");
+          exit.exitWithError();
+        case BuildStatus.finishing:
+          logger.info("Build finishing...");
+          break;
+        case BuildStatus.finished:
+          logger.success("Build finished.");
+          // TODO: ビルドナンバーを表示する。
+          // TODO: 通知を送る。
+          exit.exitWithSuccess();
+        case BuildStatus.failed:
+          // TODO: 通知を送る。
+          // TODO: エラーページへのURLを表示する。
+          logger.err("Build failed.");
+          exit.exitWithError();
+      }
+      await Future.delayed(Duration(seconds: 30));
+    }
+  }
+
   @override
   Future<void> run() async {
     // Codemagic APIで使用する環境変数がない場合はエラーを出力して終了する。
     if (token == null) {
       logger.err("CODEMAGIC_API_TOKEN is not set.");
+      // TODO: 確認ページのURLと環境変数に追加するコマンドを表示する。
       logger.info(
           "The access token is available in the Codemagic UI under Teams > Personal Account > Integrations > Codemagic API > Show.");
       exit.exitWithError();
@@ -132,11 +195,13 @@ Workflow: ${selectedWorkflow.name}
     final branch = argResults!['branch'] as String;
 
     // ビルドを開始する。
-    await _startBuild(
+    final build = await _startBuild(
       selectedApplication: selectedApplication,
       selectedWorkflow: selectedWorkflow,
       branch: branch,
     );
+
+    await _waitBuild(build);
     return;
   }
 }
