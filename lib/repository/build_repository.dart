@@ -16,7 +16,7 @@ class BuildRepository {
   final Ref ref;
 
   /// ビルドを開始する。
-  Future<Build> startBuild({
+  Future<String> startBuild({
     required String token,
     required String appId,
     required String workflowId,
@@ -35,11 +35,11 @@ class BuildRepository {
         },
       ),
     );
-    return Build.fromJson(response.data);
+    return response.data['buildId'];
   }
 
   /// ビルドのステータスを取得する。
-  Future<String> getBuildStatus({
+  Future<Build> getBuildStatus({
     required String token,
     required String buildId,
   }) async {
@@ -51,6 +51,6 @@ class BuildRepository {
         },
       ),
     );
-    return response.data['build']['status'];
+    return Build.fromJson(response.data['build']);
   }
 }

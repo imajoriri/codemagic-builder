@@ -21,8 +21,17 @@ Build _$BuildFromJson(Map<String, dynamic> json) {
 /// @nodoc
 mixin _$Build {
   /// ID。
-  @JsonKey(name: 'buildId')
+  @JsonKey(name: '_id')
   String get id => throw _privateConstructorUsedError;
+
+  /// status
+  BuildStatus get status => throw _privateConstructorUsedError;
+
+  /// Index。
+  int? get index => throw _privateConstructorUsedError;
+
+  /// Version。
+  String? get version => throw _privateConstructorUsedError;
 
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
@@ -34,7 +43,11 @@ abstract class $BuildCopyWith<$Res> {
   factory $BuildCopyWith(Build value, $Res Function(Build) then) =
       _$BuildCopyWithImpl<$Res, Build>;
   @useResult
-  $Res call({@JsonKey(name: 'buildId') String id});
+  $Res call(
+      {@JsonKey(name: '_id') String id,
+      BuildStatus status,
+      int? index,
+      String? version});
 }
 
 /// @nodoc
@@ -51,12 +64,27 @@ class _$BuildCopyWithImpl<$Res, $Val extends Build>
   @override
   $Res call({
     Object? id = null,
+    Object? status = null,
+    Object? index = freezed,
+    Object? version = freezed,
   }) {
     return _then(_value.copyWith(
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as String,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as BuildStatus,
+      index: freezed == index
+          ? _value.index
+          : index // ignore: cast_nullable_to_non_nullable
+              as int?,
+      version: freezed == version
+          ? _value.version
+          : version // ignore: cast_nullable_to_non_nullable
+              as String?,
     ) as $Val);
   }
 }
@@ -68,7 +96,11 @@ abstract class _$$BuildImplCopyWith<$Res> implements $BuildCopyWith<$Res> {
       __$$BuildImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({@JsonKey(name: 'buildId') String id});
+  $Res call(
+      {@JsonKey(name: '_id') String id,
+      BuildStatus status,
+      int? index,
+      String? version});
 }
 
 /// @nodoc
@@ -83,12 +115,27 @@ class __$$BuildImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? id = null,
+    Object? status = null,
+    Object? index = freezed,
+    Object? version = freezed,
   }) {
     return _then(_$BuildImpl(
       id: null == id
           ? _value.id
           : id // ignore: cast_nullable_to_non_nullable
               as String,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as BuildStatus,
+      index: freezed == index
+          ? _value.index
+          : index // ignore: cast_nullable_to_non_nullable
+              as int?,
+      version: freezed == version
+          ? _value.version
+          : version // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
@@ -96,19 +143,36 @@ class __$$BuildImplCopyWithImpl<$Res>
 /// @nodoc
 @JsonSerializable()
 class _$BuildImpl extends _Build {
-  const _$BuildImpl({@JsonKey(name: 'buildId') required this.id}) : super._();
+  const _$BuildImpl(
+      {@JsonKey(name: '_id') required this.id,
+      required this.status,
+      this.index,
+      this.version})
+      : super._();
 
   factory _$BuildImpl.fromJson(Map<String, dynamic> json) =>
       _$$BuildImplFromJson(json);
 
   /// ID。
   @override
-  @JsonKey(name: 'buildId')
+  @JsonKey(name: '_id')
   final String id;
+
+  /// status
+  @override
+  final BuildStatus status;
+
+  /// Index。
+  @override
+  final int? index;
+
+  /// Version。
+  @override
+  final String? version;
 
   @override
   String toString() {
-    return 'Build(id: $id)';
+    return 'Build(id: $id, status: $status, index: $index, version: $version)';
   }
 
   @override
@@ -116,12 +180,15 @@ class _$BuildImpl extends _Build {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$BuildImpl &&
-            (identical(other.id, id) || other.id == id));
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.status, status) || other.status == status) &&
+            (identical(other.index, index) || other.index == index) &&
+            (identical(other.version, version) || other.version == version));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, id);
+  int get hashCode => Object.hash(runtimeType, id, status, index, version);
 
   @JsonKey(ignore: true)
   @override
@@ -138,8 +205,11 @@ class _$BuildImpl extends _Build {
 }
 
 abstract class _Build extends Build {
-  const factory _Build({@JsonKey(name: 'buildId') required final String id}) =
-      _$BuildImpl;
+  const factory _Build(
+      {@JsonKey(name: '_id') required final String id,
+      required final BuildStatus status,
+      final int? index,
+      final String? version}) = _$BuildImpl;
   const _Build._() : super._();
 
   factory _Build.fromJson(Map<String, dynamic> json) = _$BuildImpl.fromJson;
@@ -147,8 +217,20 @@ abstract class _Build extends Build {
   @override
 
   /// ID。
-  @JsonKey(name: 'buildId')
+  @JsonKey(name: '_id')
   String get id;
+  @override
+
+  /// status
+  BuildStatus get status;
+  @override
+
+  /// Index。
+  int? get index;
+  @override
+
+  /// Version。
+  String? get version;
   @override
   @JsonKey(ignore: true)
   _$$BuildImplCopyWith<_$BuildImpl> get copyWith =>

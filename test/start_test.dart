@@ -6,7 +6,6 @@ import 'package:codemagic_builder/controller/exit/exit.dart';
 import 'package:codemagic_builder/controller/select_one/select_one.dart';
 import 'package:codemagic_builder/controller/token/token.dart';
 import 'package:codemagic_builder/entity/application/application.dart';
-import 'package:codemagic_builder/entity/build/build.dart';
 import 'package:codemagic_builder/entity/repository/repository.dart';
 import 'package:codemagic_builder/entity/workflow/workflow.dart';
 import 'package:codemagic_builder/repository/application_repository.dart';
@@ -143,9 +142,7 @@ void main() {
           branch: 'main',
         ),
       ).thenAnswer(
-        (_) async => Build(
-          id: 'id',
-        ),
+        (_) async => 'id',
       );
 
       final command = container.read(startCommandProvider);

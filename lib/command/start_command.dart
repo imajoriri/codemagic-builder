@@ -1,9 +1,10 @@
+import 'dart:io';
+
 import 'package:args/command_runner.dart';
 import 'package:codemagic_builder/controller/exit/exit.dart';
 import 'package:codemagic_builder/controller/select_one/select_one.dart';
 import 'package:codemagic_builder/controller/token/token.dart';
 import 'package:codemagic_builder/entity/application/application.dart';
-import 'package:codemagic_builder/entity/build/build.dart';
 import 'package:codemagic_builder/entity/build_status/build_status.dart';
 import 'package:codemagic_builder/entity/workflow/workflow.dart';
 import 'package:codemagic_builder/repository/application_repository.dart';
@@ -85,13 +86,13 @@ class StartCommand extends Command {
   }
 
   /// ビルドを開始する。
-  Future<Build> _startBuild({
+  Future<String> _startBuild({
     required Application selectedApplication,
     required Workflow selectedWorkflow,
     required String branch,
   }) async {
     final buildRepository = ref.read(buildRepositoryProvider);
-    final build = await buildRepository.startBuild(
+    final buildId = await buildRepository.startBuild(
       token: token!,
       appId: selectedApplication.id,
       workflowId: selectedWorkflow.id,
@@ -99,27 +100,26 @@ class StartCommand extends Command {
     );
     logger.success("Build started.");
     logger.info("""
-Build ID: ${build.id}
+Build ID: $buildId
 Branch: $branch
 Application: ${selectedApplication.appName}
 Workflow: ${selectedWorkflow.name}
     """);
-    return build;
+    return buildId;
   }
 
   /// ビルドが以下のステータスになるまで待機する。
   /// - [BuildStatus.finished]
   /// - [BuildStatus.failed]
   /// - [BuildStatus.canceled]
-  Future<void> _waitBuild(Build build) async {
+  Future<void> _waitBuild(String buildId, Application application) async {
     final buildRepository = ref.read(buildRepositoryProvider);
     while (true) {
-      final statusStr = await buildRepository.getBuildStatus(
+      final build = await buildRepository.getBuildStatus(
         token: token!,
-        buildId: build.id,
+        buildId: buildId,
       );
-      final status = BuildStatus.fromString(statusStr);
-      switch (status) {
+      switch (build.status) {
         case BuildStatus.queued:
           logger.info("Build queued...");
           break;
@@ -138,30 +138,37 @@ Workflow: ${selectedWorkflow.name}
         case BuildStatus.publishing:
           logger.info("Publishing...");
           break;
-        case BuildStatus.timeout:
-          logger.err("Build timeout.");
-          exit.exitWithError();
         case BuildStatus.warning:
           logger.warn("Build warning.");
           break;
         case BuildStatus.skipped:
           logger.warn("Build skipped.");
           break;
-        case BuildStatus.canceled:
-          logger.warn("Build canceled.");
-          exit.exitWithError();
         case BuildStatus.finishing:
           logger.info("Build finishing...");
           break;
+        case BuildStatus.timeout:
+          logger.err("Build timeout.");
+          _showNotification("Build timeout.", "Build timeout.");
+          exit.exitWithError();
+        case BuildStatus.canceled:
+          logger.warn("Build canceled.");
+          _showNotification("Build canceled.", "Build canceled.");
+          exit.exitWithError();
         case BuildStatus.finished:
+          final index = build.index ?? 0;
+          final version = build.version ?? "0.0.0";
           logger.success("Build finished.");
-          // TODO: ビルドナンバーを表示する。
-          // TODO: 通知を送る。
+          logger.info("Build number: $index");
+          logger.info("Version: $version");
+          _showNotification("Build finished.",
+              "Codemagic Version: $version Build number: $index");
           exit.exitWithSuccess();
         case BuildStatus.failed:
-          // TODO: 通知を送る。
-          // TODO: エラーページへのURLを表示する。
           logger.err("Build failed.");
+          logger.info(
+              "see https://codemagic.io/apps/${application.id}/builds/${build.id}");
+          _showNotification("Build failed.", "Codemagic build failed.");
           exit.exitWithError();
       }
       await Future.delayed(Duration(seconds: 30));
@@ -195,13 +202,21 @@ Workflow: ${selectedWorkflow.name}
     final branch = argResults!['branch'] as String;
 
     // ビルドを開始する。
-    final build = await _startBuild(
+    final buildId = await _startBuild(
       selectedApplication: selectedApplication,
       selectedWorkflow: selectedWorkflow,
       branch: branch,
     );
 
-    await _waitBuild(build);
+    await _waitBuild(buildId, selectedApplication);
     return;
   }
+}
+
+/// OSの通知を表示する。
+void _showNotification(String title, String message) {
+  Process.runSync('osascript', [
+    '-e',
+    'display notification "$message" with title "$title"',
+  ]);
 }

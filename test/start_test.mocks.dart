@@ -201,7 +201,7 @@ class MockBuildRepository extends _i1.Mock implements _i10.BuildRepository {
       ) as _i2.Ref<Object?>);
 
   @override
-  _i8.Future<_i3.Build> startBuild({
+  _i8.Future<String> startBuild({
     required String? token,
     required String? appId,
     required String? workflowId,
@@ -218,7 +218,7 @@ class MockBuildRepository extends _i1.Mock implements _i10.BuildRepository {
             #branch: branch,
           },
         ),
-        returnValue: _i8.Future<_i3.Build>.value(_FakeBuild_1(
+        returnValue: _i8.Future<String>.value(_i5.dummyValue<String>(
           this,
           Invocation.method(
             #startBuild,
@@ -231,7 +231,8 @@ class MockBuildRepository extends _i1.Mock implements _i10.BuildRepository {
             },
           ),
         )),
-        returnValueForMissingStub: _i8.Future<_i3.Build>.value(_FakeBuild_1(
+        returnValueForMissingStub:
+            _i8.Future<String>.value(_i5.dummyValue<String>(
           this,
           Invocation.method(
             #startBuild,
@@ -241,6 +242,44 @@ class MockBuildRepository extends _i1.Mock implements _i10.BuildRepository {
               #appId: appId,
               #workflowId: workflowId,
               #branch: branch,
+            },
+          ),
+        )),
+      ) as _i8.Future<String>);
+
+  @override
+  _i8.Future<_i3.Build> getBuildStatus({
+    required String? token,
+    required String? buildId,
+  }) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getBuildStatus,
+          [],
+          {
+            #token: token,
+            #buildId: buildId,
+          },
+        ),
+        returnValue: _i8.Future<_i3.Build>.value(_FakeBuild_1(
+          this,
+          Invocation.method(
+            #getBuildStatus,
+            [],
+            {
+              #token: token,
+              #buildId: buildId,
+            },
+          ),
+        )),
+        returnValueForMissingStub: _i8.Future<_i3.Build>.value(_FakeBuild_1(
+          this,
+          Invocation.method(
+            #getBuildStatus,
+            [],
+            {
+              #token: token,
+              #buildId: buildId,
             },
           ),
         )),
