@@ -1,0 +1,17 @@
+name: dart test
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout"
+        uses: actions/checkout@v4
+
+      - uses: dart-lang/setup-dart@v1
+
+      - name: "Run tests"
+        run: flutter test
