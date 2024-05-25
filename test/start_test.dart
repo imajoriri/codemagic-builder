@@ -6,6 +6,8 @@ import 'package:codemagic_builder/controller/exit/exit.dart';
 import 'package:codemagic_builder/controller/select_one/select_one.dart';
 import 'package:codemagic_builder/controller/token/token.dart';
 import 'package:codemagic_builder/entity/application/application.dart';
+import 'package:codemagic_builder/entity/build/build.dart';
+import 'package:codemagic_builder/entity/build_status/build_status.dart';
 import 'package:codemagic_builder/entity/repository/repository.dart';
 import 'package:codemagic_builder/entity/workflow/workflow.dart';
 import 'package:codemagic_builder/repository/application_repository.dart';
@@ -33,6 +35,11 @@ class MockExit extends Mock implements Exit {
   Never exitWithError() {
     throw Exception('exit');
   }
+
+  @override
+  Never exitWithSuccess() {
+    throw Exception('exit');
+  }
 }
 
 void main() {
@@ -53,50 +60,6 @@ void main() {
       selectOneProvider(title: "", options: [])
           .overrideWith((ref) => 'codemagic_builder'),
     ];
-
-    test('tokenが空の場合、エラーを返す。', () async {
-      final container = createContainer(overrides: [
-        applicationRepositoryProvider.overrideWithValue(applicationRepository),
-        buildRepositoryProvider.overrideWithValue(buildRepository),
-        loggerProvider.overrideWithValue(logger),
-        gitProvider.overrideWithValue(git),
-        exitProvider.overrideWithValue(exit),
-        tokenProvider.overrideWithValue(null),
-      ]);
-
-      final command = container.read(startCommandProvider);
-      final commandRunner = CommandRunner("", "description")
-        ..addCommand(command);
-      try {
-        await commandRunner.run(['start']);
-      } catch (e) {
-        expect(e, isA<Exception>());
-      }
-      verify(logger.err("CODEMAGIC_API_TOKEN is not set.")).called(1);
-      verify(logger.info(
-              "The access token is available in the Codemagic UI under Teams > Personal Account > Integrations > Codemagic API > Show."))
-          .called(1);
-    });
-
-    test('Applicationが空の場合、エラーを返す。', () async {
-      final container = createContainer(overrides: overrides);
-
-      when(
-        applicationRepository.getRepositories(token: 'token'),
-      ).thenAnswer(
-        (_) async => [],
-      );
-
-      final command = container.read(startCommandProvider);
-      final commandRunner = CommandRunner("", "description")
-        ..addCommand(command);
-      try {
-        await commandRunner.run(['start']);
-      } catch (e) {
-        expect(e, isA<Exception>());
-      }
-      verify(logger.err("Applications is Empty.")).called(1);
-    });
 
     test('正常系', () async {
       final container = createContainer(overrides: [
@@ -145,6 +108,15 @@ void main() {
         (_) async => 'id',
       );
 
+      when(
+        buildRepository.getBuildStatus(
+          token: 'token',
+          buildId: 'id',
+        ),
+      ).thenAnswer(
+        (_) async => Build(id: "id", status: BuildStatus.finished),
+      );
+
       final command = container.read(startCommandProvider);
       final commandRunner = CommandRunner("", "description")
         ..addCommand(command);
@@ -155,6 +127,51 @@ void main() {
       }
       verify(logger.success("Build started.")).called(1);
     });
+
+    test('tokenが空の場合、エラーを返す。', () async {
+      final container = createContainer(overrides: [
+        applicationRepositoryProvider.overrideWithValue(applicationRepository),
+        buildRepositoryProvider.overrideWithValue(buildRepository),
+        loggerProvider.overrideWithValue(logger),
+        gitProvider.overrideWithValue(git),
+        exitProvider.overrideWithValue(exit),
+        tokenProvider.overrideWithValue(null),
+      ]);
+
+      final command = container.read(startCommandProvider);
+      final commandRunner = CommandRunner("", "description")
+        ..addCommand(command);
+      try {
+        await commandRunner.run(['start']);
+      } catch (e) {
+        expect(e, isA<Exception>());
+      }
+      verify(logger.err("CODEMAGIC_API_TOKEN is not set.")).called(1);
+      verify(logger.info(
+              "The access token is available in the Codemagic UI under Teams > Personal Account > Integrations > Codemagic API > Show."))
+          .called(1);
+    });
+
+    test('Applicationが空の場合、エラーを返す。', () async {
+      final container = createContainer(overrides: overrides);
+
+      when(
+        applicationRepository.getRepositories(token: 'token'),
+      ).thenAnswer(
+        (_) async => [],
+      );
+
+      final command = container.read(startCommandProvider);
+      final commandRunner = CommandRunner("", "description")
+        ..addCommand(command);
+      try {
+        await commandRunner.run(['start']);
+      } catch (e) {
+        expect(e, isA<Exception>());
+      }
+      verify(logger.err("Applications is Empty.")).called(1);
+    });
+
     test('選択したApplicationのWorkflowが空の場合、エラーを返す。', () async {
       final container = createContainer(overrides: [
         applicationRepositoryProvider.overrideWithValue(applicationRepository),
