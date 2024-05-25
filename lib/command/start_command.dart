@@ -45,7 +45,7 @@ class StartCommand extends Command {
   /// [Application]を取得する。
   ///
   /// 現在のリポジトリ名からApplicationを取得し、取得できない場合はユーザーに選択させる。
-  Application getApplication(List<Application> applications) {
+  Application _getApplication(List<Application> applications) {
     final currentRepositoryName = git.getCurrentRepositoryName();
     final currentApplication = applications.firstWhereOrNull(
       (element) => element.repository.name == currentRepositoryName,
@@ -68,7 +68,7 @@ class StartCommand extends Command {
   }
 
   /// ユーザーが選択した[Workflow]を取得する。
-  Workflow getWorkflow(List<Workflow> workflows) {
+  Workflow _getWorkflow(List<Workflow> workflows) {
     final selectedWorkflowName = ref.read(selectOneProvider(
       title: "Select a workflow...",
       options: workflows.map((e) => e.name).toList(),
@@ -84,7 +84,7 @@ class StartCommand extends Command {
   }
 
   /// ビルドを開始する。
-  Future<Build> startBuild({
+  Future<Build> _startBuild({
     required Application selectedApplication,
     required Workflow selectedWorkflow,
     required String branch,
@@ -126,14 +126,14 @@ Workflow: ${selectedWorkflow.name}
       logger.err("Applications is Empty.");
       exit.exitWithError();
     }
-    final selectedApplication = getApplication(applications);
+    final selectedApplication = _getApplication(applications);
 
     final workflows = selectedApplication.workflows.values.toList();
-    final selectedWorkflow = getWorkflow(workflows);
+    final selectedWorkflow = _getWorkflow(workflows);
     final branch = argResults!['branch'] as String;
 
     // ビルドを開始する。
-    await startBuild(
+    await _startBuild(
       selectedApplication: selectedApplication,
       selectedWorkflow: selectedWorkflow,
       branch: branch,
