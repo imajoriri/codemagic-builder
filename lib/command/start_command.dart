@@ -1,13 +1,22 @@
-import 'dart:io';
-
 import 'package:args/command_runner.dart';
+import 'package:codemagic_builder/controller/exit/exit.dart';
+import 'package:codemagic_builder/controller/select_one/select_one.dart';
+import 'package:codemagic_builder/controller/token/token.dart';
 import 'package:codemagic_builder/entity/application/application.dart';
+import 'package:codemagic_builder/entity/build/build.dart';
 import 'package:codemagic_builder/entity/workflow/workflow.dart';
 import 'package:codemagic_builder/repository/application_repository.dart';
-import 'package:codemagic_builder/utils/git.dart';
-import 'package:codemagic_builder/utils/logger.dart';
+import 'package:codemagic_builder/repository/build_repository.dart';
+import 'package:codemagic_builder/controller/git/git.dart';
+import 'package:codemagic_builder/controller/logger/logger.dart';
 import 'package:collection/collection.dart';
-import 'package:dart_console/dart_console.dart';
+import 'package:riverpod/riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part 'start_command.g.dart';
+
+@riverpod
+StartCommand startCommand(StartCommandRef ref) => StartCommand(ref: ref);
 
 /// ビルドをスタートするためのコマンド。
 class StartCommand extends Command {
@@ -17,12 +26,18 @@ class StartCommand extends Command {
   @override
   final description = "Start a new build";
 
-  StartCommand() {
+  final Ref ref;
+  Git get git => ref.read(gitProvider);
+  Logger get logger => ref.read(loggerProvider);
+  Exit get exit => ref.read(exitProvider);
+  String? get token => ref.read(tokenProvider);
+
+  StartCommand({required this.ref}) {
     argParser.addOption(
       'branch',
       abbr: 'b',
-      defaultsTo: getCurrentBranch(),
-      allowed: getBranches(),
+      defaultsTo: git.getCurrentBranch(),
+      allowed: git.getBranches(),
       help: 'branch name',
     );
   }
@@ -31,106 +46,98 @@ class StartCommand extends Command {
   ///
   /// 現在のリポジトリ名からApplicationを取得し、取得できない場合はユーザーに選択させる。
   Application getApplication(List<Application> applications) {
-    final currentRepositoryName = getCurrentRepositoryName();
+    final currentRepositoryName = git.getCurrentRepositoryName();
     final currentApplication = applications.firstWhereOrNull(
       (element) => element.repository.name == currentRepositoryName,
     );
     if (currentApplication != null) {
       return currentApplication;
     }
-    logger.info("Select an application.");
-    final selectedApplicationName = selectOne(
-      title: "Select an application...",
+    final selectedApplicationName = ref.read(selectOneProvider(
+      title: "Select a codemagic application...",
       options: applications.map((e) => e.appName).toList(),
-    );
+    ));
     final selectedApplication = applications.firstWhereOrNull(
       (element) => element.appName == selectedApplicationName,
     );
     if (selectedApplication == null) {
       logger.err("Application not found.");
-      exit(1);
+      exit.exitWithError();
     }
     return selectedApplication;
   }
 
   /// ユーザーが選択した[Workflow]を取得する。
   Workflow getWorkflow(List<Workflow> workflows) {
-    final selectedWorkflowName = selectOne(
+    final selectedWorkflowName = ref.read(selectOneProvider(
       title: "Select a workflow...",
       options: workflows.map((e) => e.name).toList(),
-    );
+    ));
     final selectedWorkflow = workflows.firstWhereOrNull(
       (element) => element.name == selectedWorkflowName,
     );
     if (selectedWorkflow == null) {
-      logger.err("Workflow not found.");
-      exit(1);
+      logger.err("Workflows is Empty.");
+      exit.exitWithError();
     }
     return selectedWorkflow;
   }
 
+  /// ビルドを開始する。
+  Future<Build> startBuild({
+    required Application selectedApplication,
+    required Workflow selectedWorkflow,
+    required String branch,
+  }) async {
+    final buildRepository = ref.read(buildRepositoryProvider);
+    final build = await buildRepository.startBuild(
+      token: token!,
+      appId: selectedApplication.id,
+      workflowId: selectedWorkflow.id,
+      branch: branch,
+    );
+    logger.success("Build started.");
+    logger.info("""
+Build ID: ${build.id}
+Branch: $branch
+Application: ${selectedApplication.appName}
+Workflow: ${selectedWorkflow.name}
+    """);
+    return build;
+  }
+
   @override
-  void run() async {
+  Future<void> run() async {
+    logger.info("Starting a new build...");
     // Codemagic APIで使用する環境変数がない場合はエラーを出力して終了する。
-    if (Platform.environment['CODEMAGIC_API_TOKEN'] == null) {
+    if (token == null) {
       logger.err("CODEMAGIC_API_TOKEN is not set.");
-      exit(1);
+      logger.info(
+          "The access token is available in the Codemagic UI under Teams > Personal Account > Integrations > Codemagic API > Show.");
+      exit.exitWithError();
     }
 
     // アプリケーション一覧を取得する。
     logger.info("Fetching codemagic applications...");
-    final applicationRepository = ApplicationRepository();
-    final applications = await applicationRepository.getRepositories(
-      token: Platform.environment['CODEMAGIC_API_TOKEN']!,
-    );
+    final applicationRepository = ref.read(applicationRepositoryProvider);
+    final applications =
+        await applicationRepository.getRepositories(token: token!);
+    if (applications.isEmpty) {
+      logger.err("Applications is Empty.");
+      exit.exitWithError();
+    }
     final selectedApplication = getApplication(applications);
 
     final workflows = selectedApplication.workflows.values.toList();
     final selectedWorkflow = getWorkflow(workflows);
     final branch = argResults!['branch'] as String;
+
+    // ビルドを開始する。
+    await startBuild(
+      selectedApplication: selectedApplication,
+      selectedWorkflow: selectedWorkflow,
+      branch: branch,
+    );
     return;
-  }
-}
-
-/// 配列の中からユーザーに1つを選択させるメソッド。
-///
-/// ユーザーは十字キーで選択し、Enterキーで確定する。
-String selectOne({
-  required String title,
-  required List<String> options,
-}) {
-  final console = Console();
-  var selectedIndex = 0;
-
-  void renderMenu() {
-    console.clearScreen();
-    console.writeLine(title);
-    for (var i = 0; i < options.length; i++) {
-      if (i == selectedIndex) {
-        console.setForegroundColor(ConsoleColor.white);
-        console.setBackgroundColor(ConsoleColor.blue);
-        console.writeLine(options[i]);
-        console.resetColorAttributes();
-      } else {
-        console.writeLine(options[i]);
-      }
-    }
-  }
-
-  renderMenu();
-
-  while (true) {
-    final key = console.readKey();
-
-    if (key.controlChar == ControlCharacter.arrowDown) {
-      selectedIndex = (selectedIndex + 1) % options.length;
-    } else if (key.controlChar == ControlCharacter.arrowUp) {
-      selectedIndex = (selectedIndex - 1 + options.length) % options.length;
-    } else if (key.controlChar == ControlCharacter.enter) {
-      console.clearScreen();
-      return options[selectedIndex];
-    }
-
-    renderMenu();
   }
 }
