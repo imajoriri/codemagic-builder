@@ -181,10 +181,23 @@ Workflow: ${selectedWorkflow.name}
   Future<void> run() async {
     // Codemagic APIで使用する環境変数がない場合はエラーを出力して終了する。
     if (token == null) {
-      logger.err("CODEMAGIC_API_TOKEN is not set.");
-      // TODO: 確認ページのURLと環境変数に追加するコマンドを表示する。
-      logger.info(
-          "The access token is available in the Codemagic UI under Teams > Personal Account > Integrations > Codemagic API > Show.");
+      logger.err(
+          "Error: API token is not set. Please set the API token as an environment variable and try again.");
+      logger.info("""
+
+To set the API token, follow these steps:
+
+1. The access token is available in the Codemagic UI under Teams > Personal Account > Integrations > Codemagic API > Show.
+2. Add the API token to your `~/.bash_profile` or `~/.zshrc` file.
+
+  # bash
+  echo 'export API_TOKEN=your_api_token_here' >> ~/.bash_profile
+  source ~/.bash_profile
+  
+  # zsh
+  echo 'export API_TOKEN=your_api_token_here' >> ~/.zshrc
+  source ~/.zshrc
+""");
       exit.exitWithError();
     }
 
