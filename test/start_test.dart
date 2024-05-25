@@ -20,14 +20,10 @@ import 'package:test/test.dart';
 import 'create_container.dart';
 import 'start_test.mocks.dart';
 
-@GenerateMocks([
-  // Exit,
-])
 @GenerateNiceMocks([
   // contrller
   MockSpec<Git>(),
   MockSpec<Logger>(),
-  // MockSpec<Exit<void>>(),
 
   // repository
   MockSpec<ApplicationRepository>(),
