@@ -33,7 +33,7 @@ source ~/.zshrc
 # Updating
 
 ```
-brew update cmagic
+brew upgrade cmagic
 ```
 
 # Usage
