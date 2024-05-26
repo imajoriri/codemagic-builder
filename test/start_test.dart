@@ -1,7 +1,7 @@
 // ignore_for_file: dead_code
 
 import 'package:args/command_runner.dart';
-import 'package:codemagic_builder/command/start_command.dart';
+import 'package:codemagic_builder/command/start/start_command.dart';
 import 'package:codemagic_builder/controller/exit/exit.dart';
 import 'package:codemagic_builder/controller/select_one/select_one.dart';
 import 'package:codemagic_builder/controller/token/token.dart';
