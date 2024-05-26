@@ -98,7 +98,7 @@ class StartCommand extends Command {
       workflowId: selectedWorkflow.id,
       branch: branch,
     );
-    logger.success("--- Build process started. ---");
+    logger.success("--- Build process started! ---");
     logger.success(
         "You’ll get a notification when it’s done. Keep this running to receive the notification. Press Ctrl + C to stop at any time.");
     logger.info("""
