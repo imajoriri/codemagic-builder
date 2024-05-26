@@ -11,6 +11,7 @@ import 'package:codemagic_builder/repository/application_repository.dart';
 import 'package:codemagic_builder/repository/build_repository.dart';
 import 'package:codemagic_builder/controller/git/git.dart';
 import 'package:codemagic_builder/controller/logger/logger.dart';
+import 'package:codemagic_builder/usecase/select_branch_usecase.dart';
 import 'package:collection/collection.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -214,7 +215,19 @@ To set the API token, follow these steps:
 
     final workflows = selectedApplication.workflows.values.toList();
     final selectedWorkflow = _getWorkflow(workflows);
-    final branch = argResults!['branch'] as String;
+
+    // ブランチを選択し、存在しない場合はエラーを出力して終了する。
+    final branch = ref
+        .read(selectBranchUseCaseProvider(
+          selectedApplication,
+          argResults!['branch'] as String,
+        ))
+        .invoke();
+    if (branch == null) {
+      logger.err("Branch not found.");
+      logger.info("You can specify the branch with the --branch option.");
+      exit.exitWithError();
+    }
 
     // ビルドを開始する。
     final buildId = await _startBuild(

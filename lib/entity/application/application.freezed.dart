@@ -33,6 +33,9 @@ mixin _$Application {
   /// ワークフローのリスト。
   Map<String, Workflow> get workflows => throw _privateConstructorUsedError;
 
+  /// ブランチのリスト。
+  List<String> get branches => throw _privateConstructorUsedError;
+
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
   @JsonKey(ignore: true)
   $ApplicationCopyWith<Application> get copyWith =>
@@ -49,7 +52,8 @@ abstract class $ApplicationCopyWith<$Res> {
       {@JsonKey(name: '_id') String id,
       String appName,
       Repository repository,
-      Map<String, Workflow> workflows});
+      Map<String, Workflow> workflows,
+      List<String> branches});
 
   $RepositoryCopyWith<$Res> get repository;
 }
@@ -71,6 +75,7 @@ class _$ApplicationCopyWithImpl<$Res, $Val extends Application>
     Object? appName = null,
     Object? repository = null,
     Object? workflows = null,
+    Object? branches = null,
   }) {
     return _then(_value.copyWith(
       id: null == id
@@ -89,6 +94,10 @@ class _$ApplicationCopyWithImpl<$Res, $Val extends Application>
           ? _value.workflows
           : workflows // ignore: cast_nullable_to_non_nullable
               as Map<String, Workflow>,
+      branches: null == branches
+          ? _value.branches
+          : branches // ignore: cast_nullable_to_non_nullable
+              as List<String>,
     ) as $Val);
   }
 
@@ -113,7 +122,8 @@ abstract class _$$ApplicationImplCopyWith<$Res>
       {@JsonKey(name: '_id') String id,
       String appName,
       Repository repository,
-      Map<String, Workflow> workflows});
+      Map<String, Workflow> workflows,
+      List<String> branches});
 
   @override
   $RepositoryCopyWith<$Res> get repository;
@@ -134,6 +144,7 @@ class __$$ApplicationImplCopyWithImpl<$Res>
     Object? appName = null,
     Object? repository = null,
     Object? workflows = null,
+    Object? branches = null,
   }) {
     return _then(_$ApplicationImpl(
       id: null == id
@@ -152,6 +163,10 @@ class __$$ApplicationImplCopyWithImpl<$Res>
           ? _value._workflows
           : workflows // ignore: cast_nullable_to_non_nullable
               as Map<String, Workflow>,
+      branches: null == branches
+          ? _value._branches
+          : branches // ignore: cast_nullable_to_non_nullable
+              as List<String>,
     ));
   }
 }
@@ -163,8 +178,10 @@ class _$ApplicationImpl implements _Application {
       {@JsonKey(name: '_id') required this.id,
       required this.appName,
       required this.repository,
-      required final Map<String, Workflow> workflows})
-      : _workflows = workflows;
+      required final Map<String, Workflow> workflows,
+      required final List<String> branches})
+      : _workflows = workflows,
+        _branches = branches;
 
   factory _$ApplicationImpl.fromJson(Map<String, dynamic> json) =>
       _$$ApplicationImplFromJson(json);
@@ -193,9 +210,20 @@ class _$ApplicationImpl implements _Application {
     return EqualUnmodifiableMapView(_workflows);
   }
 
+  /// ブランチのリスト。
+  final List<String> _branches;
+
+  /// ブランチのリスト。
+  @override
+  List<String> get branches {
+    if (_branches is EqualUnmodifiableListView) return _branches;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_branches);
+  }
+
   @override
   String toString() {
-    return 'Application(id: $id, appName: $appName, repository: $repository, workflows: $workflows)';
+    return 'Application(id: $id, appName: $appName, repository: $repository, workflows: $workflows, branches: $branches)';
   }
 
   @override
@@ -208,13 +236,19 @@ class _$ApplicationImpl implements _Application {
             (identical(other.repository, repository) ||
                 other.repository == repository) &&
             const DeepCollectionEquality()
-                .equals(other._workflows, _workflows));
+                .equals(other._workflows, _workflows) &&
+            const DeepCollectionEquality().equals(other._branches, _branches));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, id, appName, repository,
-      const DeepCollectionEquality().hash(_workflows));
+  int get hashCode => Object.hash(
+      runtimeType,
+      id,
+      appName,
+      repository,
+      const DeepCollectionEquality().hash(_workflows),
+      const DeepCollectionEquality().hash(_branches));
 
   @JsonKey(ignore: true)
   @override
@@ -235,7 +269,8 @@ abstract class _Application implements Application {
       {@JsonKey(name: '_id') required final String id,
       required final String appName,
       required final Repository repository,
-      required final Map<String, Workflow> workflows}) = _$ApplicationImpl;
+      required final Map<String, Workflow> workflows,
+      required final List<String> branches}) = _$ApplicationImpl;
 
   factory _Application.fromJson(Map<String, dynamic> json) =
       _$ApplicationImpl.fromJson;
@@ -257,6 +292,10 @@ abstract class _Application implements Application {
 
   /// ワークフローのリスト。
   Map<String, Workflow> get workflows;
+  @override
+
+  /// ブランチのリスト。
+  List<String> get branches;
   @override
   @JsonKey(ignore: true)
   _$$ApplicationImplCopyWith<_$ApplicationImpl> get copyWith =>

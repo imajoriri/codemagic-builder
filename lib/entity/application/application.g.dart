@@ -15,6 +15,8 @@ _$ApplicationImpl _$$ApplicationImplFromJson(Map<String, dynamic> json) =>
       workflows: (json['workflows'] as Map<String, dynamic>).map(
         (k, e) => MapEntry(k, Workflow.fromJson(e as Map<String, dynamic>)),
       ),
+      branches:
+          (json['branches'] as List<dynamic>).map((e) => e as String).toList(),
     );
 
 Map<String, dynamic> _$$ApplicationImplToJson(_$ApplicationImpl instance) =>
@@ -23,4 +25,5 @@ Map<String, dynamic> _$$ApplicationImplToJson(_$ApplicationImpl instance) =>
       'appName': instance.appName,
       'repository': instance.repository,
       'workflows': instance.workflows,
+      'branches': instance.branches,
     };

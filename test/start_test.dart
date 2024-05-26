@@ -86,6 +86,7 @@ void main() {
               id: 1,
               htmlUrl: "https://github.com/owner/repository",
             ),
+            branches: ['main'],
             workflows: {
               'id': Workflow(
                 id: 'id',
@@ -198,6 +199,7 @@ void main() {
               htmlUrl: "https://github.com/owner/repository",
             ),
             workflows: {},
+            branches: ['main'],
           ),
         ],
       );

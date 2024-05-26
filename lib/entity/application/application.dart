@@ -24,6 +24,9 @@ sealed class Application with _$Application {
 
     /// ワークフローのリスト。
     required Map<String, Workflow> workflows,
+
+    /// ブランチのリスト。
+    required List<String> branches,
   }) = _Application;
 
   /// JSONから[Application]に変換する。
