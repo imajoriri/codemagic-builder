@@ -216,18 +216,12 @@ To set the API token, follow these steps:
     final workflows = selectedApplication.workflows.values.toList();
     final selectedWorkflow = _getWorkflow(workflows);
 
-    // ブランチを選択し、存在しない場合はエラーを出力して終了する。
     final branch = ref
         .read(selectBranchUseCaseProvider(
           selectedApplication,
-          argResults!['branch'] as String,
+          argResults!['branch'],
         ))
         .invoke();
-    if (branch == null) {
-      logger.err("Branch not found.");
-      logger.info("You can specify the branch with the --branch option.");
-      exit.exitWithError();
-    }
 
     // ビルドを開始する。
     final buildId = await _startBuild(
