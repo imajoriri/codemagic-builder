@@ -28,6 +28,8 @@ echo 'export API_TOKEN=your_api_token_here' >> ~/.zshrc
 source ~/.zshrc
 ```
 
+<img src="https://github.com/imajoriri/codemagic-builder/assets/30540418/14d98ed9-c977-4d6c-99fd-ce80fb797e03" width="700">
+
 # Updating
 
 ```
