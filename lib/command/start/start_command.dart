@@ -192,11 +192,11 @@ To set the API token, follow these steps:
 2. Add the API token to your `~/.bash_profile` or `~/.zshrc` file.
 
   # bash
-  echo 'export API_TOKEN=your_api_token_here' >> ~/.bash_profile
+  echo 'export CODEMAGIC_API_TOKEN=your_api_token_here' >> ~/.bash_profile
   source ~/.bash_profile
   
   # zsh
-  echo 'export API_TOKEN=your_api_token_here' >> ~/.zshrc
+  echo 'export CODEMAGIC_API_TOKEN=your_api_token_here' >> ~/.zshrc
   source ~/.zshrc
 """);
       exit.exitWithError();
