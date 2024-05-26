@@ -20,11 +20,11 @@ To set the API token, follow these steps:
 
 ```
 # bash
-echo 'export API_TOKEN=your_api_token_here' >> ~/.bash_profile
+echo 'export CODEMAGIC_API_TOKEN=your_api_token_here' >> ~/.bash_profile
 source ~/.bash_profile
 
 # zsh
-echo 'export API_TOKEN=your_api_token_here' >> ~/.zshrc
+echo 'export CODEMAGIC_API_TOKEN=your_api_token_here' >> ~/.zshrc
 source ~/.zshrc
 ```
 
@@ -47,3 +47,7 @@ cmagic start
 options
 
 - `-b, --branch`: Branch name to build against. Default is current branch.
+
+![CleanShot 2024-05-27 at 08 11 01@2x](https://github.com/imajoriri/codemagic-builder/assets/30540418/917477ef-b598-40ae-b027-eefcf3f01db8)
+
+![CleanShot 2024-05-27 at 08 10 48@2x](https://github.com/imajoriri/codemagic-builder/assets/30540418/4d83a99c-b5af-4d79-8a86-214d4636f7ee)
