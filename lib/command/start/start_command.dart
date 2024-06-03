@@ -161,7 +161,7 @@ Workflow: ${selectedWorkflow.name}
         case BuildStatus.finished:
           final index = build.index ?? 0;
           final version = build.version ?? "0.0.0";
-          logger.success("Build finished.");
+          logger.success("Build success.");
           logger.info("Build number: $index");
           logger.info("Version: $version");
           _showNotification("Build finished.",
