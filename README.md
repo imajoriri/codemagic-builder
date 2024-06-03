@@ -30,6 +30,12 @@ source ~/.zshrc
 
 <img src="https://github.com/imajoriri/codemagic-builder/assets/30540418/14d98ed9-c977-4d6c-99fd-ce80fb797e03" width="700">
 
+# Setting notification
+
+To receive notifications from Cmagic as alerts instead of banners, change it in the Settings app.
+
+<img src="https://github.com/imajoriri/codemagic-builder/assets/30540418/338dcb1b-873a-4302-a914-dc5d98aea24d" width="700">
+
 # Updating
 
 ```
