@@ -11,7 +11,6 @@ import 'package:codemagic_builder/repository/application_repository.dart';
 import 'package:codemagic_builder/repository/build_repository.dart';
 import 'package:codemagic_builder/controller/git/git.dart';
 import 'package:codemagic_builder/controller/logger/logger.dart';
-import 'package:codemagic_builder/usecase/select_branch_usecase.dart';
 import 'package:collection/collection.dart';
 import 'package:riverpod/riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -40,7 +39,6 @@ class StartCommand extends Command {
       'branch',
       abbr: 'b',
       defaultsTo: git.getCurrentBranch(),
-      allowed: git.getBranches(),
       help: 'branch name',
     );
   }
@@ -216,18 +214,11 @@ To set the API token, follow these steps:
     final workflows = selectedApplication.workflows.values.toList();
     final selectedWorkflow = _getWorkflow(workflows);
 
-    final branch = ref
-        .read(selectBranchUseCaseProvider(
-          selectedApplication,
-          argResults!['branch'],
-        ))
-        .invoke();
-
     // ビルドを開始する。
     final buildId = await _startBuild(
       selectedApplication: selectedApplication,
       selectedWorkflow: selectedWorkflow,
-      branch: branch,
+      branch: argResults!['branch'],
     );
 
     await _waitBuild(buildId, selectedApplication);
