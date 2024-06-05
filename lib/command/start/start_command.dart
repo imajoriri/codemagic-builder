@@ -162,7 +162,7 @@ Workflow: ${selectedWorkflow.name}
           logger.success("Build success.");
           logger.info("Build number: $index");
           logger.info("Version: $version");
-          _showNotification("Build finished.",
+          _showNotification("Build success.",
               "Codemagic Version: $version Build number: $index");
           exit.exitWithSuccess();
         case BuildStatus.failed:
