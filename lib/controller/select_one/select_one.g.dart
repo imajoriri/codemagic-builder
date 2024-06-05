@@ -6,7 +6,7 @@ part of 'select_one.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$selectOneHash() => r'5cb14c8b8f0288f5eec26aa8c301cf62e2769c31';
+String _$selectOneHash() => r'd76f17578df5dd227c2ecff9041cabe153ae0de0';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -72,10 +72,12 @@ class SelectOneFamily extends Family {
   SelectOneProvider call({
     required String title,
     required List<String> options,
+    int initialIndex = 0,
   }) {
     return SelectOneProvider(
       title: title,
       options: options,
+      initialIndex: initialIndex,
     );
   }
 
@@ -87,6 +89,7 @@ class SelectOneFamily extends Family {
     return call(
       title: provider.title,
       options: provider.options,
+      initialIndex: provider.initialIndex,
     );
   }
 
@@ -126,11 +129,13 @@ class SelectOneProvider extends AutoDisposeProvider<String> {
   SelectOneProvider({
     required String title,
     required List<String> options,
+    int initialIndex = 0,
   }) : this._internal(
           (ref) => selectOne(
             ref as SelectOneRef,
             title: title,
             options: options,
+            initialIndex: initialIndex,
           ),
           from: selectOneProvider,
           name: r'selectOneProvider',
@@ -142,6 +147,7 @@ class SelectOneProvider extends AutoDisposeProvider<String> {
           allTransitiveDependencies: SelectOneFamily._allTransitiveDependencies,
           title: title,
           options: options,
+          initialIndex: initialIndex,
         );
 
   SelectOneProvider._internal(
@@ -153,10 +159,12 @@ class SelectOneProvider extends AutoDisposeProvider<String> {
     required super.from,
     required this.title,
     required this.options,
+    required this.initialIndex,
   }) : super.internal();
 
   final String title;
   final List<String> options;
+  final int initialIndex;
 
   @override
   Override overrideWith(
@@ -173,6 +181,7 @@ class SelectOneProvider extends AutoDisposeProvider<String> {
         debugGetCreateSourceHash: null,
         title: title,
         options: options,
+        initialIndex: initialIndex,
       ),
     );
   }
@@ -181,10 +190,12 @@ class SelectOneProvider extends AutoDisposeProvider<String> {
   ({
     String title,
     List<String> options,
+    int initialIndex,
   }) get argument {
     return (
       title: title,
       options: options,
+      initialIndex: initialIndex,
     );
   }
 
@@ -205,6 +216,7 @@ class SelectOneProvider extends AutoDisposeProvider<String> {
       from: from,
       title: title,
       options: options,
+      initialIndex: initialIndex,
     );
   }
 
@@ -212,7 +224,8 @@ class SelectOneProvider extends AutoDisposeProvider<String> {
   bool operator ==(Object other) {
     return other is SelectOneProvider &&
         other.title == title &&
-        other.options == options;
+        other.options == options &&
+        other.initialIndex == initialIndex;
   }
 
   @override
@@ -220,6 +233,7 @@ class SelectOneProvider extends AutoDisposeProvider<String> {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, title.hashCode);
     hash = _SystemHash.combine(hash, options.hashCode);
+    hash = _SystemHash.combine(hash, initialIndex.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -231,6 +245,9 @@ mixin SelectOneRef on AutoDisposeProviderRef<String> {
 
   /// The parameter `options` of this provider.
   List<String> get options;
+
+  /// The parameter `initialIndex` of this provider.
+  int get initialIndex;
 }
 
 class _SelectOneProviderElement extends AutoDisposeProviderElement<String>
@@ -241,6 +258,8 @@ class _SelectOneProviderElement extends AutoDisposeProviderElement<String>
   String get title => (origin as SelectOneProvider).title;
   @override
   List<String> get options => (origin as SelectOneProvider).options;
+  @override
+  int get initialIndex => (origin as SelectOneProvider).initialIndex;
 }
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, inference_failure_on_uninitialized_variable, inference_failure_on_function_return_type, inference_failure_on_untyped_parameter, deprecated_member_use_from_same_package

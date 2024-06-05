@@ -35,6 +35,19 @@ class StartCommand extends Command {
   String? get token => ref.read(tokenProvider);
 
   StartCommand({required this.ref}) {
+    // アプリケーション名
+    argParser.addOption(
+      'app',
+      abbr: 'a',
+      help: 'Codemagic application name',
+    );
+    // ワークフロー名
+    argParser.addOption(
+      'workflow',
+      abbr: 'w',
+      help: 'Codemagic workflow name',
+    );
+    // ブランチ名
     argParser.addOption(
       'branch',
       abbr: 'b',
@@ -45,31 +58,47 @@ class StartCommand extends Command {
 
   /// [Application]を取得する。
   ///
-  /// 現在のリポジトリ名からApplicationを取得し、取得できない場合はユーザーに選択させる。
+  /// options['app']が指定されている場合は、そのアプリケーションを返す。
+  /// それ以外の場合は、ユーザーにアプリケーションを選択させる。
   Application _getApplication(List<Application> applications) {
+    // options['app']が指定されている場合は、そのアプリケーションを返す。
+    final app = argResults!['app'];
+    if (app != null) {
+      if (applications
+              .indexWhere((element) => element.repository.name == app) ==
+          -1) {
+        logger.err("$app not found.");
+        exit.exitWithError();
+      }
+      return argResults!['app'];
+    }
+    // 現在のリポジトリ名をデフォルトの選択肢にする。
     final currentRepositoryName = git.getCurrentRepositoryName();
-    final currentApplication = applications.firstWhereOrNull(
+    final currentApplicationIndex = applications.indexWhere(
       (element) => element.repository.name == currentRepositoryName,
     );
-    if (currentApplication != null) {
-      return currentApplication;
-    }
-    final selectedApplicationName = ref.read(selectOneProvider(
+    final applicationName = ref.read(selectOneProvider(
       title: "Select a codemagic application...",
       options: applications.map((e) => e.appName).toList(),
+      initialIndex: currentApplicationIndex == -1 ? 0 : currentApplicationIndex,
     ));
-    final selectedApplication = applications.firstWhereOrNull(
-      (element) => element.appName == selectedApplicationName,
+    final application = applications.firstWhereOrNull(
+      (element) => element.appName == applicationName,
     );
-    if (selectedApplication == null) {
-      logger.err("Application not found.");
-      exit.exitWithError();
-    }
-    return selectedApplication;
+    return application!;
   }
 
   /// ユーザーが選択した[Workflow]を取得する。
   Workflow _getWorkflow(List<Workflow> workflows) {
+    final workflow = argResults!['workflow'];
+    if (workflow != null) {
+      if (workflows.indexWhere((element) => element.name == workflow) == -1) {
+        logger.err("$workflow not found.");
+        exit.exitWithError();
+      }
+      return workflows.firstWhere((element) => element.name == workflow);
+    }
+
     final selectedWorkflowName = ref.read(selectOneProvider(
       title: "Select a workflow...",
       options: workflows.map((e) => e.name).toList(),
@@ -77,11 +106,7 @@ class StartCommand extends Command {
     final selectedWorkflow = workflows.firstWhereOrNull(
       (element) => element.name == selectedWorkflowName,
     );
-    if (selectedWorkflow == null) {
-      logger.err("Workflows is Empty.");
-      exit.exitWithError();
-    }
-    return selectedWorkflow;
+    return selectedWorkflow!;
   }
 
   /// ビルドを開始する。

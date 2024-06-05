@@ -11,10 +11,12 @@ String selectOne(
   SelectOneRef ref, {
   required String title,
   required List<String> options,
+  int initialIndex = 0,
 }) {
   final selection = Select(
     prompt: title,
     options: options,
+    initialIndex: initialIndex,
   ).interact();
   return options[selection];
 }

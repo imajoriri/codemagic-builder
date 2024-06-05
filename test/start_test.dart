@@ -126,7 +126,7 @@ void main() {
       } catch (e) {
         expect(e, isA<Exception>());
       }
-      verify(logger.success("Build started.")).called(1);
+      verify(logger.success("--- Build process started! ---")).called(1);
     });
 
     test('tokenが空の場合、エラーを返す。', () async {
@@ -147,9 +147,8 @@ void main() {
       } catch (e) {
         expect(e, isA<Exception>());
       }
-      verify(logger.err("CODEMAGIC_API_TOKEN is not set.")).called(1);
-      verify(logger.info(
-              "The access token is available in the Codemagic UI under Teams > Personal Account > Integrations > Codemagic API > Show."))
+      verify(logger.err(
+              "Error: API token is not set. Please set the API token as an environment variable and try again."))
           .called(1);
     });
 
@@ -171,48 +170,6 @@ void main() {
         expect(e, isA<Exception>());
       }
       verify(logger.err("Applications is Empty.")).called(1);
-    });
-
-    test('選択したApplicationのWorkflowが空の場合、エラーを返す。', () async {
-      final container = createContainer(overrides: [
-        applicationRepositoryProvider.overrideWithValue(applicationRepository),
-        buildRepositoryProvider.overrideWithValue(buildRepository),
-        loggerProvider.overrideWithValue(logger),
-        gitProvider.overrideWithValue(git),
-        exitProvider.overrideWithValue(exit),
-        tokenProvider.overrideWithValue('token'),
-        selectOneProvider.overrideWith((ref) => 'result'),
-      ]);
-
-      when(git.getCurrentRepositoryName()).thenReturn('result');
-      when(git.getCurrentBranch()).thenReturn('main');
-      when(git.getBranches()).thenReturn(['main']);
-      when(
-        applicationRepository.getRepositories(token: 'token'),
-      ).thenAnswer(
-        (_) async => [
-          Application(
-            id: 'id',
-            appName: 'result',
-            repository: Repository(
-              id: 1,
-              htmlUrl: "https://github.com/owner/repository",
-            ),
-            workflows: {},
-            branches: ['main'],
-          ),
-        ],
-      );
-
-      final command = container.read(startCommandProvider);
-      final commandRunner = CommandRunner("", "description")
-        ..addCommand(command);
-      try {
-        await commandRunner.run(['start']);
-      } catch (e) {
-        expect(e, isA<Exception>());
-      }
-      verify(logger.err("Workflows is Empty.")).called(1);
     });
   });
 }
