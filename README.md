@@ -34,7 +34,8 @@ source ~/.zshrc
 
 To receive notifications from Cmagic as alerts instead of banners, change it in the Settings app.
 
-<img src="https://github.com/imajoriri/codemagic-builder/assets/30540418/338dcb1b-873a-4302-a914-dc5d98aea24d" width="700">
+<img src="https://github.com/imajoriri/codemagic-builder/assets/30540418/cff9c580-e13f-480b-b7ac-77612eb6cb75" width="700">
+
 
 # Updating
 
