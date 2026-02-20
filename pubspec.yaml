@@ -26,3 +26,7 @@ dev_dependencies:
   freezed: ^2.5.2
   riverpod_generator: ^3.0.0-dev.11
   # custom_lint: ^0.6.4
+
+# interact が参照する win32 5.2.0 は Dart 3 で UnmodifiableUint8ListView 未定義エラーになるため上書き
+dependency_overrides:
+  win32: ^5.10.0
