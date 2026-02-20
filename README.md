@@ -63,7 +63,20 @@ dart compile exe bin/main.dart -o cmagic
 
 `cmagic` がカレントディレクトリに出力される。
 
-**配布する場合:** このリポジトリでタグを切りビルドしただけでは不十分。Homebrew で配布するには [homebrew-cmagic](https://github.com/imajoriri/homebrew-cmagic/blob/main/cmagic.rb) の `cmagic.rb` を更新する必要がある。`version`・`url`（リリースの tarball）・`sha256` を新しいリリースに合わせて変更すること。
+### Homebrew で配布する場合
+
+このリポジトリでタグを切り GitHub にリリースしただけでは不十分。[homebrew-cmagic](https://github.com/imajoriri/homebrew-cmagic/blob/main/cmagic.rb) の `cmagic.rb` を更新する必要がある。
+
+1. **version** … 新しいバージョン番号（例: `0.0.6`）
+2. **url** … リリースの tarball（例: `https://github.com/imajoriri/codemagic-builder/archive/refs/tags/v0.0.6.tar.gz`）
+3. **sha256** … 上記 tarball の SHA256。取得方法:
+
+```bash
+# タグ名（例: v0.0.6）は実際のリリースに合わせて変更
+curl -sL https://github.com/imajoriri/codemagic-builder/archive/refs/tags/v0.0.6.tar.gz | shasum -a 256
+```
+
+出力の先頭 64 文字が `sha256` に書く値。formula を更新しないと `brew upgrade cmagic` は「already installed」のままになる。
 
 # 使い方
 
