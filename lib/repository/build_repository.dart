@@ -51,6 +51,32 @@ class BuildRepository {
         },
       ),
     );
-    return Build.fromJson(response.data['build']);
+    final buildJson = response.data['build'] as Map<String, dynamic>;
+    final build = Build.fromJson(buildJson);
+    final (apk, ipa) = _versionCodesFromArtefacts(buildJson['artefacts']);
+    return build.copyWith(versionCodeApk: apk, versionCodeIpa: ipa);
+  }
+
+  /// artefacts 配列から apk / ipa の versionCode を取得する。
+  static (String? apk, String? ipa) _versionCodesFromArtefacts(dynamic artefacts) {
+    final list = artefacts as List<dynamic>?;
+    if (list == null) return (null, null);
+    String? apk;
+    String? ipa;
+    for (final a in list) {
+      final map = a as Map<String, dynamic>?;
+      if (map == null) continue;
+      final v = map['versionCode'];
+      final s = v is String ? v : (v?.toString());
+      switch (map['type']) {
+        case 'apk':
+          apk ??= s;
+          break;
+        case 'ipa':
+          ipa ??= s;
+          break;
+      }
+    }
+    return (apk, ipa);
   }
 }

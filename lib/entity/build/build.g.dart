@@ -9,7 +9,8 @@ part of 'build.dart';
 _$BuildImpl _$$BuildImplFromJson(Map<String, dynamic> json) => _$BuildImpl(
       id: json['_id'] as String,
       status: $enumDecode(_$BuildStatusEnumMap, json['status']),
-      index: (json['index'] as num?)?.toInt(),
+      versionCodeApk: json['versionCodeApk'] as String?,
+      versionCodeIpa: json['versionCodeIpa'] as String?,
       version: json['version'] as String?,
     );
 
@@ -17,7 +18,8 @@ Map<String, dynamic> _$$BuildImplToJson(_$BuildImpl instance) =>
     <String, dynamic>{
       '_id': instance.id,
       'status': _$BuildStatusEnumMap[instance.status]!,
-      'index': instance.index,
+      'versionCodeApk': instance.versionCodeApk,
+      'versionCodeIpa': instance.versionCodeIpa,
       'version': instance.version,
     };
 

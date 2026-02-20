@@ -17,8 +17,11 @@ class Build with _$Build {
     /// status
     required BuildStatus status,
 
-    /// Index。
-    int? index,
+    /// Version code（artefacts の apk から取得。API の build 直下にはない）。
+    String? versionCodeApk,
+
+    /// Version code（artefacts の ipa から取得。API の build 直下にはない）。
+    String? versionCodeIpa,
 
     /// Version。
     String? version,

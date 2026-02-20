@@ -27,8 +27,11 @@ mixin _$Build {
   /// status
   BuildStatus get status => throw _privateConstructorUsedError;
 
-  /// Index。
-  int? get index => throw _privateConstructorUsedError;
+  /// Version code（artefacts の apk から取得。API の build 直下にはない）。
+  String? get versionCodeApk => throw _privateConstructorUsedError;
+
+  /// Version code（artefacts の ipa から取得。API の build 直下にはない）。
+  String? get versionCodeIpa => throw _privateConstructorUsedError;
 
   /// Version。
   String? get version => throw _privateConstructorUsedError;
@@ -46,7 +49,8 @@ abstract class $BuildCopyWith<$Res> {
   $Res call(
       {@JsonKey(name: '_id') String id,
       BuildStatus status,
-      int? index,
+      String? versionCodeApk,
+      String? versionCodeIpa,
       String? version});
 }
 
@@ -65,7 +69,8 @@ class _$BuildCopyWithImpl<$Res, $Val extends Build>
   $Res call({
     Object? id = null,
     Object? status = null,
-    Object? index = freezed,
+    Object? versionCodeApk = freezed,
+    Object? versionCodeIpa = freezed,
     Object? version = freezed,
   }) {
     return _then(_value.copyWith(
@@ -77,10 +82,14 @@ class _$BuildCopyWithImpl<$Res, $Val extends Build>
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
               as BuildStatus,
-      index: freezed == index
-          ? _value.index
-          : index // ignore: cast_nullable_to_non_nullable
-              as int?,
+      versionCodeApk: freezed == versionCodeApk
+          ? _value.versionCodeApk
+          : versionCodeApk // ignore: cast_nullable_to_non_nullable
+              as String?,
+      versionCodeIpa: freezed == versionCodeIpa
+          ? _value.versionCodeIpa
+          : versionCodeIpa // ignore: cast_nullable_to_non_nullable
+              as String?,
       version: freezed == version
           ? _value.version
           : version // ignore: cast_nullable_to_non_nullable
@@ -99,7 +108,8 @@ abstract class _$$BuildImplCopyWith<$Res> implements $BuildCopyWith<$Res> {
   $Res call(
       {@JsonKey(name: '_id') String id,
       BuildStatus status,
-      int? index,
+      String? versionCodeApk,
+      String? versionCodeIpa,
       String? version});
 }
 
@@ -116,7 +126,8 @@ class __$$BuildImplCopyWithImpl<$Res>
   $Res call({
     Object? id = null,
     Object? status = null,
-    Object? index = freezed,
+    Object? versionCodeApk = freezed,
+    Object? versionCodeIpa = freezed,
     Object? version = freezed,
   }) {
     return _then(_$BuildImpl(
@@ -128,10 +139,14 @@ class __$$BuildImplCopyWithImpl<$Res>
           ? _value.status
           : status // ignore: cast_nullable_to_non_nullable
               as BuildStatus,
-      index: freezed == index
-          ? _value.index
-          : index // ignore: cast_nullable_to_non_nullable
-              as int?,
+      versionCodeApk: freezed == versionCodeApk
+          ? _value.versionCodeApk
+          : versionCodeApk // ignore: cast_nullable_to_non_nullable
+              as String?,
+      versionCodeIpa: freezed == versionCodeIpa
+          ? _value.versionCodeIpa
+          : versionCodeIpa // ignore: cast_nullable_to_non_nullable
+              as String?,
       version: freezed == version
           ? _value.version
           : version // ignore: cast_nullable_to_non_nullable
@@ -146,7 +161,8 @@ class _$BuildImpl extends _Build {
   const _$BuildImpl(
       {@JsonKey(name: '_id') required this.id,
       required this.status,
-      this.index,
+      this.versionCodeApk,
+      this.versionCodeIpa,
       this.version})
       : super._();
 
@@ -162,9 +178,13 @@ class _$BuildImpl extends _Build {
   @override
   final BuildStatus status;
 
-  /// Index。
+  /// Version code（artefacts の apk から取得。API の build 直下にはない）。
   @override
-  final int? index;
+  final String? versionCodeApk;
+
+  /// Version code（artefacts の ipa から取得。API の build 直下にはない）。
+  @override
+  final String? versionCodeIpa;
 
   /// Version。
   @override
@@ -172,7 +192,7 @@ class _$BuildImpl extends _Build {
 
   @override
   String toString() {
-    return 'Build(id: $id, status: $status, index: $index, version: $version)';
+    return 'Build(id: $id, status: $status, versionCodeApk: $versionCodeApk, versionCodeIpa: $versionCodeIpa, version: $version)';
   }
 
   @override
@@ -182,13 +202,17 @@ class _$BuildImpl extends _Build {
             other is _$BuildImpl &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.status, status) || other.status == status) &&
-            (identical(other.index, index) || other.index == index) &&
+            (identical(other.versionCodeApk, versionCodeApk) ||
+                other.versionCodeApk == versionCodeApk) &&
+            (identical(other.versionCodeIpa, versionCodeIpa) ||
+                other.versionCodeIpa == versionCodeIpa) &&
             (identical(other.version, version) || other.version == version));
   }
 
   @JsonKey(ignore: true)
   @override
-  int get hashCode => Object.hash(runtimeType, id, status, index, version);
+  int get hashCode => Object.hash(
+      runtimeType, id, status, versionCodeApk, versionCodeIpa, version);
 
   @JsonKey(ignore: true)
   @override
@@ -208,7 +232,8 @@ abstract class _Build extends Build {
   const factory _Build(
       {@JsonKey(name: '_id') required final String id,
       required final BuildStatus status,
-      final int? index,
+      final String? versionCodeApk,
+      final String? versionCodeIpa,
       final String? version}) = _$BuildImpl;
   const _Build._() : super._();
 
@@ -225,8 +250,12 @@ abstract class _Build extends Build {
   BuildStatus get status;
   @override
 
-  /// Index。
-  int? get index;
+  /// Version code（artefacts の apk から取得。API の build 直下にはない）。
+  String? get versionCodeApk;
+  @override
+
+  /// Version code（artefacts の ipa から取得。API の build 直下にはない）。
+  String? get versionCodeIpa;
   @override
 
   /// Version。

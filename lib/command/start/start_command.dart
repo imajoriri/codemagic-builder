@@ -185,13 +185,23 @@ Workflow: ${selectedWorkflow.name}
           _showNotification("Build canceled.", "Build canceled.");
           exit.exitWithError();
         case BuildStatus.finished:
-          final index = build.index ?? 0;
+          final versionCodeApk = build.versionCodeApk;
+          final versionCodeIpa = build.versionCodeIpa;
           final version = build.version ?? "0.0.0";
           logger.success("Build success.");
-          logger.info("Build number: $index");
+          if (versionCodeApk != null) {
+            logger.info("Version code (APK): $versionCodeApk");
+          }
+          if (versionCodeIpa != null) {
+            logger.info("Version code (IPA): $versionCodeIpa");
+          }
           logger.info("Version: $version");
+          final codePart = [
+            if (versionCodeApk != null) "APK: $versionCodeApk",
+            if (versionCodeIpa != null) "IPA: $versionCodeIpa",
+          ].join(" ");
           _showNotification("Build success.",
-              "Codemagic Version: $version Build number: $index");
+              "Codemagic Version: $version${codePart.isNotEmpty ? " $codePart" : ""}");
           exit.exitWithSuccess();
         case BuildStatus.failed:
           logger.err("Build failed.");
