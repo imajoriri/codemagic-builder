@@ -1,22 +1,22 @@
 # Cmagic
 
-cmagic is a tool for building Codemagic from CLI.
+Cmagic は CLI から Codemagic のビルドを実行するツールです。
 
-# Installing
+# インストール
 
-To install the cmagic
+インストールするには
 
 ```
 brew tap imajoriri/cmagic
 brew install cmagic
 ```
 
-# Setup Codemagic API Token
+# Codemagic API トークンの設定
 
-To set the API token, follow these steps:
+API トークンを設定する手順:
 
-1. The access token is available in the Codemagic UI under Teams > Personal Account > Integrations > Codemagic API > Show.
-2. Add the API token to your `~/.bash_profile` or `~/.zshrc` file.
+1. アクセストークンは Codemagic の UI で Teams > Personal Account > Integrations > Codemagic API > Show から確認できる。
+2. `~/.bash_profile` または `~/.zshrc` にトークンを追記する。
 
 ```
 # bash
@@ -30,21 +30,21 @@ source ~/.zshrc
 
 <img src="https://github.com/imajoriri/codemagic-builder/assets/30540418/14d98ed9-c977-4d6c-99fd-ce80fb797e03" width="700">
 
-# Setting notification
+# 通知の設定
 
-To receive notifications from Cmagic as alerts instead of banners, change it in the Settings app.
+Cmagic の通知をバナーではなくアラートで受け取るには、システム環境設定（通知）で変更する。
 
 <img src="https://github.com/imajoriri/codemagic-builder/assets/30540418/cff9c580-e13f-480b-b7ac-77612eb6cb75" width="700">
 
 
-# Updating
+# アップデート
 
 ```
 brew update
 brew upgrade cmagic
 ```
 
-# Development
+# 開発
 
 ローカルで開発する場合:
 
@@ -53,7 +53,7 @@ brew upgrade cmagic
 dart run bin/main.dart start
 ```
 
-# Build for release
+# リリース用ビルド
 
 リリース用の実行ファイルをビルドする場合:
 
@@ -63,17 +63,19 @@ dart compile exe bin/main.dart -o cmagic
 
 `cmagic` がカレントディレクトリに出力される。
 
-# Usage
+**配布する場合:** このリポジトリでタグを切りビルドしただけでは不十分。Homebrew で配布するには [homebrew-cmagic](https://github.com/imajoriri/homebrew-cmagic/blob/main/cmagic.rb) の `cmagic.rb` を更新する必要がある。`version`・`url`（リリースの tarball）・`sha256` を新しいリリースに合わせて変更すること。
 
-### Start new build
+# 使い方
+
+### ビルドを開始する
 
 ```
 cmagic start
 ```
 
-options
+オプション
 
-- `-b, --branch`: Branch name to build against. Default is current branch.
+- `-b, --branch`: ビルド対象のブランチ名。省略時はカレントブランチ。
 
 ![CleanShot 2024-05-27 at 08 11 01@2x](https://github.com/imajoriri/codemagic-builder/assets/30540418/917477ef-b598-40ae-b027-eefcf3f01db8)
 
