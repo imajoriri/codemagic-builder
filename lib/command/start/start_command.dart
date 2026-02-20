@@ -37,7 +37,7 @@ class StartCommand extends Command {
   StartCommand({required this.ref}) {
     // アプリケーション名
     argParser.addOption(
-      'app',
+      'application',
       abbr: 'a',
       help: 'Codemagic application name',
     );
@@ -58,19 +58,22 @@ class StartCommand extends Command {
 
   /// [Application]を取得する。
   ///
-  /// options['app']が指定されている場合は、そのアプリケーションを返す。
+  /// options['application']が指定されている場合は、そのアプリケーションを返す。
   /// それ以外の場合は、ユーザーにアプリケーションを選択させる。
   Application _getApplication(List<Application> applications) {
-    // options['app']が指定されている場合は、そのアプリケーションを返す。
-    final app = argResults!['app'];
-    if (app != null) {
-      if (applications
-              .indexWhere((element) => element.repository.name == app) ==
-          -1) {
+    // options['application']が指定されている場合は、そのアプリケーションを返す。
+    final app = argResults!['application'];
+    if (app != null && app.isNotEmpty) {
+      final appStr = app as String;
+      final application = applications.firstWhereOrNull(
+        (element) =>
+            element.appName == appStr || element.repository.name == appStr,
+      );
+      if (application == null) {
         logger.err("$app not found.");
         exit.exitWithError();
       }
-      return argResults!['app'];
+      return application;
     }
     // 現在のリポジトリ名をデフォルトの選択肢にする。
     final currentRepositoryName = git.getCurrentRepositoryName();
