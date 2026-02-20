@@ -44,6 +44,25 @@ brew update
 brew upgrade cmagic
 ```
 
+# Development
+
+ローカルで開発する場合:
+
+```bash
+# コマンドを実行（例: start）
+dart run bin/main.dart start
+```
+
+# Build for release
+
+リリース用の実行ファイルをビルドする場合:
+
+```bash
+dart compile exe bin/main.dart -o cmagic
+```
+
+`cmagic` がカレントディレクトリに出力される。
+
 # Usage
 
 ### Start new build
